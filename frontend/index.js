@@ -36,7 +36,11 @@ function moduleProject2() {
       square.classList.add('square')
       row.appendChild(square)
       square.addEventListener('click', () => {
-        // 👉 TASK 2 - Use a click handler to target a square 👈
+        if (square.classList.contains(`targeted`)) {
+        } else {
+          getAllSquares().forEach(square => square.classList.remove(`targeted`))
+          square.classList.add(`targeted`)
+        }
       })
     }
   }
@@ -64,11 +68,78 @@ function moduleProject2() {
   })
 
   document.addEventListener('keydown', evt => {
+
     // 👉 TASK 3 - Use the arrow keys to highlight a new square 👈
+
+    let up = evt.key === keys.up;
+    let right = evt.key === keys.right;
+    let down = evt.key === keys.down;
+    let left = evt.key === keys.left;
+
+    let kill = evt.key === keys.space;
+
+    let targeted = document.querySelector(`.targeted`);
+
+    if (up)
+    {
+      if (targeted.parentElement.previousElementSibling) {
+        let index = Array.from(targeted.parentElement.children).indexOf(targeted);
+        targeted.classList.remove(`targeted`);
+        targeted.parentElement.previousElementSibling.children[index].classList.add(`targeted`)
+      }
+    }
+    else if (right)
+      {
+      if (targeted.nextElementSibling) {
+        targeted.classList.remove(`targeted`)
+        targeted.nextElementSibling.classList.add(`targeted`)
+      }
+    }
+    else if (down)
+    {
+      if (targeted.parentElement.nextElementSibling) {
+        let index = Array.from(targeted.parentElement.children).indexOf(targeted);
+        targeted.classList.remove(`targeted`);
+        targeted.parentElement.nextElementSibling.children[index].classList.add(`targeted`)
+      }
+    }
+    else if (left)
+    {
+      if (targeted.previousElementSibling) {
+        targeted.classList.remove(`targeted`);
+        targeted.previousElementSibling.classList.add(`targeted`)
+      }
+    }
 
     // 👉 TASK 4 - Use the space bar to exterminate a mosquito 👈
 
-    // 👉 TASK 5 - End the game 👈
+    else if (kill)
+    {
+      let squash = targeted.firstChild
+
+      if (squash && squash.dataset.status === `alive`) {
+        squash.dataset.status = `dead`;
+        squash.parentElement.style.backgroundColor = `red`
+      }
+
+      // 👉 TASK 5 - End the game 👈
+
+      let survivors = document.querySelectorAll(`[data-status=alive]`)
+      console.log(survivors)
+      if (!survivors.length) {
+        let timeElapsed = getTimeElapsed()
+        // console.log(timeElapsed)
+        document.querySelector(`p.info`)
+        .textContent = `Extermination completed in ${timeElapsed / 1000} seconds!`
+
+        let reBtn = document.createElement(`button`)
+        reBtn.textContent = `Restart`
+        reBtn.addEventListener(`click`, () => {
+          location.reload()
+        })
+        document.querySelector(`h2`).insertAdjacentElement(`beforeend`, reBtn)
+      }
+    }
   })
   // 👆 WORK WORK ABOVE THIS LINE 👆
 }
